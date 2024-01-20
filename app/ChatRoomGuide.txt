@@ -1,0 +1,39 @@
+In the ChatRoom class, you would typically implement methods that handle various actions and functionalities related to managing users, messages, and the overall state of the chat room. Below are some suggested methods:
+
+__init__(self, room_name):
+
+The constructor to initialize the chat room with a given room_name. Set default values for other attributes, such as an empty list for users and message_history.
+add_user(self, user):
+
+Add a user to the chat room. This method should check if the user is not already in the room and add them to the users list.
+remove_user(self, user):
+
+Remove a user from the chat room. This method should handle removing the user from the users list.
+add_message(self, message):
+
+Add a message to the chat room's message history. This method should handle appending the message to the message_history list.
+get_message_history(self):
+
+Retrieve the message history of the chat room. This method could be used when displaying the chat history to users.
+broadcast_message(self, message):
+
+Broadcast a message to all users in the chat room. This method should use the WebSocket connection to send the message to each connected user.
+is_user_in_room(self, user):
+
+Check if a given user is currently in the chat room. This can be useful for handling actions that depend on the user's presence.
+get_user_list(self):
+
+Retrieve the list of users currently in the chat room. This method can be useful for displaying the list of users in the user interface.
+set_room_description(self, description):
+
+Set or update the description or topic of the chat room.
+ban_user(self, user_to_ban):
+
+Ban a user from the chat room. This method should add the user to a banned_users list and potentially handle other actions like kicking the user from the room.
+unban_user(self, user_to_unban):
+
+Remove a user from the banned users list, allowing them to rejoin the chat room.
+close_room(self):
+
+Mark the chat room as closed or inactive. This could prevent new users from joining and signal existing users that the room is no longer available.
+Remember, these are general suggestions, and the specific methods you implement will depend on the features and functionalities you want in your chat application. Tailor these methods to suit the requirements of your project.
