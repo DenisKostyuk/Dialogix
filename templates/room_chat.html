@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ room.roomName }}</title>
+</head>
+<body>
+    <h1>Welcome to Room {{ room.roomName }}</h1>
+
+    <form action="#" method="post">
+        <input type="text" name="message">
+        <input type="submit" value="Send">
+    </form>
+
+    <ul>
+        {% for message in room.get_messages() %}
+            <li>{{ message['Time'] }} - {{ message['Sender'] }}: {{ message['Content'] }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

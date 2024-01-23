@@ -1,5 +1,5 @@
 import time
-from app.User import User
+
 class Chat_room:
 
     def __init__(self, roomname: str):

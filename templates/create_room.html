@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="#" method="post">
+        <p> Room Name : <input type="text" name="room_name"></p>
+        <p>input type="submit" value="Create Room"</p>
+    </form>
+
+    {% for room in rooms %}
+        <form action="#" method="post">
+            <p>input type="submit" value={{ room }}</p>
+        </form>
+    {% endfor %}
+</body>
+</html>

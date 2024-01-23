@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Log in</title>
 </head>
 <body>
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
 
+    <p>You have been redirected to the log in page</p>
+    <form action="#" method="post">
+            <p>User Name :<input type="text" name="username"></p>
+            <p> Password :<input type="text" name="password"> </p>
+        <p><input type="submit" name="action" value="Log in" /></p>
+    </form>
 </body>
 </html>

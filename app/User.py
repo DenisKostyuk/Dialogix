@@ -1,10 +1,12 @@
 class User:
 
-    def __init__(self, userName:str, password:str):
+    def __init__(self, userName:str, password:str, email:str):
         self.fullName = userName
         self.password = password
+        self.email = email
         self.online = False
         self.current_room = None
+        print("A New Account Has Been Created")
 
     def send_message(self, msgContent:str) -> None:
         if self.current_room is not None:
