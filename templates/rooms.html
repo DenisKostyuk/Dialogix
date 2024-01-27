@@ -1,3 +1,22 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Rooms</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <p>You have been redirected to the rooms page</p>-->
+
+<!--    <form action="#" method="post">-->
+<!--        <p> <input type="submit" name="action" value="Create Room" /></p>-->
+<!--    </form>-->
+<!--    {% for room in rooms %}-->
+<!--        <form action="#" method="post">-->
+<!--            <p><input type="submit" name="action" value={{ room }}/></p>-->
+<!--        </form>-->
+<!--    {% endfor %}-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,5 +25,16 @@
 </head>
 <body>
     <p>You have been redirected to the rooms page</p>
+
+    <h2>Available Rooms:</h2>
+    <ul>
+        {% for room_name, room in rooms.items() %}
+            <li><a href="{{ url_for('room_chat', room_name=room_name) }}">{{ room_name }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <form action="{{ url_for('create_room') }}" method="get">
+        <p> <input type="submit" name="action" value="Create Room" /></p>
+    </form>
 </body>
 </html>

@@ -3,12 +3,17 @@ from datetime import timedelta
 from flask_sqlalchemy import SQLAlchemy
 from User import User
 from Chat_room import Chat_room
-
+from flask_socketio import SocketIO
 
 app = Flask(__name__, template_folder=r"C:\Users\denis\Desktop\Projects\Dialogix\templates")
+socketio = SocketIO(app)
 
 users = []
-rooms = []
+rooms = {}
+
+@app.route("/")
+def redirecting():
+    return redirect(url_for("home"))
 
 @app.route("/home", methods=["POST", "GET"])
 def home():
@@ -31,7 +36,7 @@ def login():
             for user in users:
                 if user.fullName == user_name and user.password == password:
 
-                    return redirect(url_for("rooms"))
+                    return redirect(url_for("display_rooms"))
             message = "Incorrect User Name Or Password , Please Try Again .."
 
 
@@ -47,35 +52,40 @@ def create_account():
             usr = User(str(user_name),str(password),str(email))
             users.append(usr)
             print(users)
-            return redirect(url_for("rooms"))
+            return redirect(url_for("display_rooms"))
     return render_template("create_account.html")
 
 
 
 
 @app.route("/rooms")
-def rooms():
-    if not rooms:
-        return redirect(url_for("create_room"))
-
-    return render_template("rooms.html")
+def display_rooms():
+    return render_template("rooms.html",rooms=rooms)
 
 
-@app.route("/create_room")
+@app.route("/create_room", methods=["GET","POST"])
 def create_room():
     if request.method == "POST":
-        if request.form["action"] == "Create Room":
+        if request.form["action"] == "Create":
             room_name = request.form["room_name"]
             new_room = Chat_room(room_name)
             rooms[room_name] = new_room
-            return redirect(url_for("room"),room_name=room_name)
+            return redirect(url_for("room_chat",room_name=room_name))
+    return render_template("create_room.html")
 
 
     return render_template("create_room.html")
 
 @app.route("/room/<room_name>", methods=["POST", "GET"])
 def room_chat(room_name):
-    return render_template("room_chat.html")
+    room = rooms.get(room_name)
+    return render_template("room_chat.html", room=room)
+
+@socketio.on('message')
+def handle_message(message):
+    room_name = request.args.get('room_name')
+    socketio.emit('message', message, room=room_name)
+
 
 
 
@@ -83,4 +93,4 @@ def room_chat(room_name):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app,debug=True, allow_unsafe_werkzeug=True)

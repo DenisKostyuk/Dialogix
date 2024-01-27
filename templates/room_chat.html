@@ -3,19 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ room.roomName }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #chat-window {
+            width: 400px;
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        #input-message {
+            width: 300px;
+        }
+    </style>
 </head>
 <body>
+
     <h1>Welcome to Room {{ room.roomName }}</h1>
 
-    <form action="#" method="post">
-        <input type="text" name="message">
+    <div id="chat-window"></div>
+
+    <form id="chat-form" action="#" method="post">
+        <input type="text" id="input-message" name="message" placeholder="Type your message...">
         <input type="submit" value="Send">
     </form>
 
-    <ul>
-        {% for message in room.get_messages() %}
-            <li>{{ message['Time'] }} - {{ message['Sender'] }}: {{ message['Content'] }}</li>
-        {% endfor %}
-    </ul>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+<script type="text/javascript">
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('message', function(message) {
+        var chatWindow = document.getElementById('chat-window');
+        chatWindow.innerHTML += '<p>' + message + '</p>';
+    });
+
+    document.getElementById('chat-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var inputMessage = document.getElementById('input-message').value;
+        socket.emit('message', inputMessage);
+        document.getElementById('input-message').value = '';
+    });
+</script>
 </body>
 </html>
