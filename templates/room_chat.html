@@ -6,9 +6,23 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Arrange elements in a column */
+        }
+        #chat-container {
+            display: flex; /* Use flexbox for layout */
+            justify-content: space-between; /* Ensure space between elements */
+            align-items: flex-start; /* Align items to the start of the flex container */
         }
         #chat-window {
-            width: 400px;
+            width: 50%; /* Adjust width as needed */
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        #participant-window {
+            width: 25%; /* Adjust width as needed */
             height: 300px;
             overflow-y: scroll;
             border: 1px solid #ccc;
@@ -23,7 +37,10 @@
 
     <h1>Welcome to Room {{ room.roomName }}</h1>
 
-    <div id="chat-window"></div>
+    <div id="chat-container">
+        <div id="chat-window"></div>
+        <div id="participant-window"></div>
+    </div>
 
     <form id="chat-form" action="#" method="post">
         <input type="text" id="input-message" name="message" placeholder="Type your message...">
@@ -34,9 +51,9 @@
 <script type="text/javascript">
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-    socket.on('message', function(message) {
+    socket.on('message', function(data) {
         var chatWindow = document.getElementById('chat-window');
-        chatWindow.innerHTML += '<p>' + message + '</p>';
+        chatWindow.innerHTML += '<p>' + data.name + ': ' + data.message + '</p>';
     });
 
     document.getElementById('chat-form').addEventListener('submit', function(event) {

@@ -26,6 +26,10 @@
 <body>
     <p>You have been redirected to the rooms page</p>
 
+    {% if 'username' in session %}
+        <p>Welcome, {{ session['username'] }}</p>
+    {% endif %}
+
     <h2>Available Rooms:</h2>
     <ul>
         {% for room_name, room in rooms.items() %}

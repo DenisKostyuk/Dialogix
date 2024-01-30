@@ -6,12 +6,14 @@ from Chat_room import Chat_room
 from flask_socketio import SocketIO
 
 app = Flask(__name__, template_folder=r"C:\Users\denis\Desktop\Projects\Dialogix\templates")
+app.config["SECRET_KEY"] = "hellogoodbye"
 socketio = SocketIO(app)
+
 
 users = []
 rooms = {}
 
-@app.route("/")
+@app.route("/" )
 def redirecting():
     return redirect(url_for("home"))
 
@@ -51,6 +53,8 @@ def create_account():
             email = request.form["email"]
             usr = User(str(user_name),str(password),str(email))
             users.append(usr)
+            session["name"] = user_name
+            print("this is the session name ==== ", session["name"])
             print(users)
             return redirect(url_for("display_rooms"))
     return render_template("create_account.html")
@@ -70,6 +74,7 @@ def create_room():
             room_name = request.form["room_name"]
             new_room = Chat_room(room_name)
             rooms[room_name] = new_room
+            session["room"] = room_name
             return redirect(url_for("room_chat",room_name=room_name))
     return render_template("create_room.html")
 
@@ -78,13 +83,16 @@ def create_room():
 
 @app.route("/room/<room_name>", methods=["POST", "GET"])
 def room_chat(room_name):
-    room = rooms.get(room_name)
+    room = session.get("room_name")
+    # room = rooms.get(room_name)
     return render_template("room_chat.html", room=room)
 
-@socketio.on('message')
+@socketio.on("message")
 def handle_message(message):
-    room_name = request.args.get('room_name')
-    socketio.emit('message', message, room=room_name)
+    name = session.get("name")
+    room = session.get("room")
+    socketio.emit('message', {'name': name, 'message': message})
+
 
 
 

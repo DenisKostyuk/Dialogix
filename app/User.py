@@ -8,6 +8,8 @@ class User:
         self.current_room = None
         print("A New Account Has Been Created")
 
+
+
     def send_message(self, msgContent:str) -> None:
         if self.current_room is not None:
             self.current_room.add_message(self.fullName, msgContent)
