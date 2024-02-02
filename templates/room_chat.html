@@ -62,6 +62,20 @@
         socket.emit('message', inputMessage);
         document.getElementById('input-message').value = '';
     });
+
+    socket.emit('participants');
+
+    socket.on('participants', function(users) {
+        var participantWindow = document.getElementById('participant-window');
+        participantWindow.innerHTML = '';
+
+        users.forEach(function(user) {
+            participantWindow.innerHTML += '<p>' + user.username + '</p>';
+    });
+});
 </script>
+
+
+
 </body>
 </html>

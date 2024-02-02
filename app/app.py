@@ -7,6 +7,7 @@ from flask_socketio import SocketIO
 
 app = Flask(__name__, template_folder=r"C:\Users\denis\Desktop\Projects\Dialogix\templates")
 app.config["SECRET_KEY"] = "hellogoodbye"
+app.config['PERMANENT_SESSION_LIFETIME'] = 30
 socketio = SocketIO(app)
 
 
@@ -76,6 +77,10 @@ def create_room():
             rooms[room_name] = new_room
             session["room"] = room_name
             return redirect(url_for("room_chat",room_name=room_name))
+            user_name = session.get("name")
+            for user in users:
+                if user.fullName == user_name:
+                    user.current_room = room_name
     return render_template("create_room.html")
 
 
@@ -83,9 +88,14 @@ def create_room():
 
 @app.route("/room/<room_name>", methods=["POST", "GET"])
 def room_chat(room_name):
-    room = session.get("room_name")
+    print("from the room_chat the room name is : ",room_name)
+    session["room"] = room_name
+    for user in users:
+        if user.fullName == session.get("name"):
+            user.current_room = room_name
+            print("in method room_chat , the users room is :", user.current_room)
     # room = rooms.get(room_name)
-    return render_template("room_chat.html", room=room)
+    return render_template("room_chat.html", room=room_name)
 
 @socketio.on("message")
 def handle_message(message):
@@ -94,6 +104,14 @@ def handle_message(message):
     socketio.emit('message', {'name': name, 'message': message})
 
 
+@socketio.on("participants")
+def show_users_in_room():
+    room_name = session.get("room")
+    print("room name is : ", room_name)
+    users_in_room = [user.fullName for user in users if user.current_room == room_name]
+    socketio.emit("participants", [{"username": fullName} for fullName in users_in_room])
+    print("Current users in the room are: ", users_in_room)
+
 
 
 
@@ -101,4 +119,7 @@ def handle_message(message):
 
 
 if __name__ == "__main__":
-    socketio.run(app,debug=True, allow_unsafe_werkzeug=True)
+    try:
+        socketio.run(app,debug=True, allow_unsafe_werkzeug=True)
+    finally:
+        session.clear()
