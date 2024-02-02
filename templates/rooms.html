@@ -1,44 +1,79 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>Rooms</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--    <p>You have been redirected to the rooms page</p>-->
-
-<!--    <form action="#" method="post">-->
-<!--        <p> <input type="submit" name="action" value="Create Room" /></p>-->
-<!--    </form>-->
-<!--    {% for room in rooms %}-->
-<!--        <form action="#" method="post">-->
-<!--            <p><input type="submit" name="action" value={{ room }}/></p>-->
-<!--        </form>-->
-<!--    {% endfor %}-->
-<!--</body>-->
-<!--</html>-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooms</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <p>You have been redirected to the rooms page</p>
+    <div class="container">
+        <p>You have been redirected to the rooms page</p>
 
-    {% if 'username' in session %}
-        <p>Welcome, {{ session['username'] }}</p>
-    {% endif %}
+        {% if 'username' in session %}
+            <p>Welcome, {{ session['username'] }}</p>
+        {% endif %}
 
-    <h2>Available Rooms:</h2>
-    <ul>
-        {% for room_name, room in rooms.items() %}
-            <li><a href="{{ url_for('room_chat', room_name=room_name) }}">{{ room_name }}</a></li>
-        {% endfor %}
-    </ul>
+        <h2>Available Rooms:</h2>
+        <ul>
+            {% for room_name, room in rooms.items() %}
+                <li><a href="{{ url_for('room_chat', room_name=room_name) }}">{{ room_name }}</a></li>
+            {% endfor %}
+        </ul>
 
-    <form action="{{ url_for('create_room') }}" method="get">
-        <p> <input type="submit" name="action" value="Create Room" /></p>
-    </form>
+        <form action="{{ url_for('create_room') }}" method="get">
+            <input type="submit" name="action" value="Create Room">
+        </form>
+    </div>
 </body>
 </html>

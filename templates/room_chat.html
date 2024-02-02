@@ -6,76 +6,106 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex; /* Use flexbox for layout */
-            flex-direction: column; /* Arrange elements in a column */
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
         }
         #chat-container {
-            display: flex; /* Use flexbox for layout */
-            justify-content: space-between; /* Ensure space between elements */
-            align-items: flex-start; /* Align items to the start of the flex container */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
-        #chat-window {
-            width: 50%; /* Adjust width as needed */
+        #chat-window, #participant-window {
+            width: 45%;
             height: 300px;
             overflow-y: scroll;
             border: 1px solid #ccc;
             padding: 10px;
-        }
-        #participant-window {
-            width: 25%; /* Adjust width as needed */
-            height: 300px;
-            overflow-y: scroll;
-            border: 1px solid #ccc;
-            padding: 10px;
+            background-color: #fff;
+            border-radius: 4px;
         }
         #input-message {
             width: 300px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        #input-message:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        #send-button {
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+        #participant-window p {
+            margin: 5px 0;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Welcome to Room {{ room.roomName }}</h1>
 
-    <h1>Welcome to Room {{ room.roomName }}</h1>
+        <div id="chat-container">
+            <div id="chat-window"></div>
+            <div id="participant-window"></div>
+        </div>
 
-    <div id="chat-container">
-        <div id="chat-window"></div>
-        <div id="participant-window"></div>
+        <form id="chat-form" action="#" method="post">
+            <input type="text" id="input-message" name="message" placeholder="Type your message...">
+            <input type="submit" id="send-button" value="Send">
+        </form>
     </div>
 
-    <form id="chat-form" action="#" method="post">
-        <input type="text" id="input-message" name="message" placeholder="Type your message...">
-        <input type="submit" value="Send">
-    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
-<script type="text/javascript">
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('message', function(data) {
+            var chatWindow = document.getElementById('chat-window');
+            chatWindow.innerHTML += '<p><strong>' + data.name + ':</strong> ' + data.message + '</p>';
+        });
 
-    socket.on('message', function(data) {
-        var chatWindow = document.getElementById('chat-window');
-        chatWindow.innerHTML += '<p>' + data.name + ': ' + data.message + '</p>';
-    });
+        document.getElementById('chat-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var inputMessage = document.getElementById('input-message').value;
+            socket.emit('message', inputMessage);
+            document.getElementById('input-message').value = '';
+        });
 
-    document.getElementById('chat-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        var inputMessage = document.getElementById('input-message').value;
-        socket.emit('message', inputMessage);
-        document.getElementById('input-message').value = '';
-    });
+        socket.emit('participants');
 
-    socket.emit('participants');
+        socket.on('participants', function(users) {
+            var participantWindow = document.getElementById('participant-window');
+            participantWindow.innerHTML = '';
 
-    socket.on('participants', function(users) {
-        var participantWindow = document.getElementById('participant-window');
-        participantWindow.innerHTML = '';
-
-        users.forEach(function(user) {
-            participantWindow.innerHTML += '<p>' + user.username + '</p>';
-    });
-});
-</script>
-
-
-
+            users.forEach(function(user) {
+                participantWindow.innerHTML += '<p>' + user.username + '</p>';
+            });
+        });
+    </script>
 </body>
 </html>
