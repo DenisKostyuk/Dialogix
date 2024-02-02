@@ -95,6 +95,15 @@ def room_chat(room_name):
             user.current_room = room_name
             print("in method room_chat , the users room is :", user.current_room)
     # room = rooms.get(room_name)
+    if request.method == "GET":
+        # Check if the "action" parameter exists in the request args
+        if "action" in request.args and request.args["action"] == "Leave Room":
+            for user in users:
+                if user.fullName == session.get("name"):
+                    user.current_room = None
+            return redirect(url_for("display_rooms"))
+        if "action" in request.args and request.args["action"] == "Log in":
+            return redirect(url_for("login"))
     return render_template("room_chat.html", room=room_name)
 
 @socketio.on("message")
